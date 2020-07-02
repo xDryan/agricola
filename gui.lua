@@ -1,4 +1,5 @@
 local widget = require "widget"
+local legumes = require "legumes"
 
 local myGUI = {}
 
@@ -19,13 +20,44 @@ function myGUI.newLabel(pX, pY, pText, pBackgroundFile, pFontSize)
   text.y = posY
   myLabel.background = background
   myLabel.text = text
+  myLabel.width = background.width
+  myLabel.height = background.height
   return myLabel
 end
 
+function myGUI.newLegume(pX, pY, pNom, pImgLegume, pBackground, pFontSize, pSceneGroup)
+  local myLegume = {}
+  local image = display.newImage(pImgLegume)
+  image.anchorX = 0
+  image.anchorY = 0
+  image.x = pX
+  image.y = pY
+  image.name = pNom
+  pSceneGroup:insert(image)
+  local posX = pX
+  local posY = pY + image.height + 5
+  local label = myGUI.newLabel(posX, posY, pNom, pBackground, pFontSize)
+  label.background.anchorX = 0
+  label.background.anchorY = 0
+  label.text.anchorX = 0
+  label.text.anchorY = 0
+  label.text.x = pX + (label.background.width - label.text.width)/2
+  label.text:setFillColor(1, 1, 1)
+  pSceneGroup:insert(label.background)
+  pSceneGroup:insert(label.text)
+  myLegume.image = image
+  myLegume.label = label
+  myLegume.width = image.width
+  myLegume.height = image.height + 5 + label.height
+  return myLegume
+end
+
 function myGUI.newButton(pX, pY, pText, pBackgroundFile, pFontSize, pAction)
-  local function testAction()
-    print("OK")
-    return true
+  local function retirerSelection( event )
+    if elementCourant ~= nil then
+      argent = argent + legumes.prix[elementCourant]
+      elementCourant = nil
+    end
   end
   local myButton = widget.newButton(
     {
@@ -39,6 +71,9 @@ function myGUI.newButton(pX, pY, pText, pBackgroundFile, pFontSize, pAction)
     })
   myButton.anchorX = 0
   myButton.anchorY = 1
+  
+  myButton:addEventListener("touch", retirerSelection)
+  
   return myButton
 end
 

@@ -2,6 +2,8 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 local widget = require "widget"
 local GUI = require "gui"
+local legumes = require "legumes"
+
 
 local function ajouterTerrain(pX, pY, pScenegroup)
   local terrain = display.newImage("images/terrain_fond.png")
@@ -15,6 +17,32 @@ local function ajouterTerrain(pX, pY, pScenegroup)
   local Y = pY - 5
   local hauteurCase = 0
   
+  local function actionCase( event )
+    if elementCourant == nil then
+      print("Aucun élément sélectionné !")
+    elseif event.target.element ~= nil then
+      print("Il y a déjà un élément ici !")
+    else
+      print("Placement de "..elementCourant)
+      local x = event.target.x
+      local y = event.target.y
+      local scenegroup = event.target.scenegroup
+      scenegroup:remove(event.target)
+      event.target = display.newImage("images/terrain_plein.png")
+      event.target.anchorX = 0
+      event.target.anchorY = 1
+      event.target.x = x
+      event.target.y = y
+      event.target:addEventListener("tap", actionCase)
+      event.target.scenegroup = scenegroup
+      event.target.element = elementCourant
+      scenegroup:insert(event.target)
+      elementCourant = nil
+      energieActuelle = energieActuelle - 1
+      lblEnergie.text.text = tostring(energieActuelle)..'/'..tostring(energieMax)
+    end
+  end
+  
   for j = 1, 4 do
     for k = 1, 4 do
       local case = display.newImage("images/terrain.png")
@@ -22,6 +50,9 @@ local function ajouterTerrain(pX, pY, pScenegroup)
       case.anchorY = 1
       case.x = X
       case.y = Y
+      case.element = nil
+      case.scenegroup = pScenegroup
+      case:addEventListener("tap", actionCase)
       hauteurCase = case.height
       X = X + hauteurCase + 10
       pScenegroup:insert(case)
@@ -36,14 +67,19 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
   
+  local fond = display.newImageRect("images/fond_base.png", 1280, 720)
+  fond.anchorX = 0
+  fond.anchorY = 0
+  sceneGroup:insert(fond)
 
-  local lblEnergie = GUI.newLabel(display.actualContentWidth - 15, 15, "Energie", "images/energie.png", 30)
-  local lblArgent = GUI.newLabel(display.actualContentWidth - 15, 30 + lblEnergie.background.height, "Argent", "images/argent.png", 30)
-  local lblJour = GUI.newLabel(display.actualContentWidth - 15, 45 + 2*lblEnergie.background.height, "Jour : 0", "images/jour.png", 30)
+  lblEnergie = GUI.newLabel(display.actualContentWidth - 15, 15, tostring(energieActuelle)..'/'..tostring(energieMax), "images/energie.png", 30)
+  lblArgent = GUI.newLabel(display.actualContentWidth - 15, 30 + lblEnergie.background.height, tostring(argent)..'$', "images/argent.png", 30)
+  lblJour = GUI.newLabel(display.actualContentWidth - 15, 45 + 2*lblEnergie.background.height, "Jour : 0", "images/jour.png", 30)
 
 
   local function actionBoutonLegumes()
     print("TODO : Ouverture de la liste des légumes à planter")
+    composer.gotoScene("scenelegumes")
   end
   
   local function actionBoutonStock()
@@ -118,6 +154,8 @@ function scene:show( event )
 		-- Exécuté avant que la scène ne vienne à l'écran
 	elseif phase == "did" then
 		-- Exécuté une fois que la scène est à l'écran
+    lblArgent.text.text = tostring(argent)..'$'
+    print(elementCourant)
 	end	
 end
 

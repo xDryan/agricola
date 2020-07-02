@@ -5,6 +5,11 @@ local widget = require "widget"
 function scene:create( event )
 	local sceneGroup = self.view
   
+  local fond = display.newImageRect("images/fond_base.png", 1280, 720)
+  fond.anchorX = 0
+  fond.anchorY = 0
+  sceneGroup:insert(fond)
+  
   local function onPressPlay()
     composer.gotoScene("scenejeu", "fade", 500)
     return true
