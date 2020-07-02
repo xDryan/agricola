@@ -10,6 +10,7 @@ function myGUI.newLabel(pX, pY, pText, pBackgroundFile, pFontSize)
   background.x = pX
   background.y = pY
   local text = display.newText(pText, 0, 0 - 3, native.systemFont, pFontSize)
+  text:setFillColor(0, 0, 0)
   text.anchorX = 1
   text.anchorY = 0
   local posX = pX - (background.width - text.width)/2
