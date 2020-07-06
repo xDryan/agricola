@@ -64,6 +64,16 @@ local function ajouterTerrain(pX, pY, pScenegroup)
   return terrain
 end
 
+local function avancerJour()
+  jour = jour + 1
+  lblJour.text.text = "Jour "..tostring(jour)
+end
+
+local function changerEnergie(pEnergie)
+  energieActuelle = pEnergie
+  lblEnergie.text.text = tostring(energieActuelle).."/"..tostring(energieMax)
+end
+
 function scene:create( event )
 	local sceneGroup = self.view
   
@@ -74,7 +84,7 @@ function scene:create( event )
 
   lblEnergie = GUI.newLabel(display.actualContentWidth - 15, 15, tostring(energieActuelle)..'/'..tostring(energieMax), "images/energie.png", 30)
   lblArgent = GUI.newLabel(display.actualContentWidth - 15, 30 + lblEnergie.background.height, tostring(argent)..'$', "images/argent.png", 30)
-  lblJour = GUI.newLabel(display.actualContentWidth - 15, 45 + 2*lblEnergie.background.height, "Jour : 0", "images/jour.png", 30)
+  lblJour = GUI.newLabel(display.actualContentWidth - 15, 45 + 2*lblEnergie.background.height, "Jour 1", "images/jour.png", 30)
 
 
   local function actionBoutonLegumes()
@@ -102,6 +112,11 @@ function scene:create( event )
     print("TODO : Affichage de la liste des dépenses")
   end
   
+  local function actionBoutonJour()
+    avancerJour()
+    changerEnergie(energieMax)
+  end
+  
   local posX = 15
   local posY = display.actualContentHeight - 15
   local btnLegumes = GUI.newButton(posX, posY, "Légumes", "images/bouton_bas.png", 25, actionBoutonLegumes)
@@ -115,6 +130,8 @@ function scene:create( event )
   local btnContrats = GUI.newButton(posX, posY, "Contrats", "images/bouton_bas.png", 25, actionBoutonContrats)
   posX = posX + btnLegumes.width + 15
   local btnDepenses = GUI.newButton(posX, posY, "Dépenses", "images/bouton_bas.png", 25, actionBoutonDepenses)
+  posX = posX + btnLegumes.width + 15
+  local btnJour = GUI.newButton(posX, posY, "", "images/bouton_jour.png", 25, actionBoutonJour)
   
   posX = 15
   posY = display.actualContentHeight - 15 - btnLegumes.height - 15
@@ -142,6 +159,7 @@ function scene:create( event )
   sceneGroup:insert(btnAnimaux)
   sceneGroup:insert(btnContrats)
   sceneGroup:insert(btnDepenses)
+  sceneGroup:insert(btnJour)
   
   
 end
